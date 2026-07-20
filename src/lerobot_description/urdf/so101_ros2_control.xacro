@@ -3,8 +3,11 @@
 
     <ros2_control name="RobotSystem" type="system">
         <!-- ros2_control Gazebo -->
+        <!-- Note, for real hardware need to add different plugin to expose the hardware interfaces -->
         <hardware>
-            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            <xacro:if value="$(arg use_sim)">
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </xacro:if>
         </hardware>
 
         <joint name="1">

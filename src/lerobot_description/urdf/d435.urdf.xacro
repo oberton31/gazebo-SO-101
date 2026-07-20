@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot name="so101" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+
+    <xacro:sensor_d435 parent="world" name="camera">
+        <origin xyz="0 0 1.2" rpy="0 ${pi/2} ${-pi/2}" />
+    </xacro:sensor_d435>
+
+    <!-- Convention is that z points forward from camera. Camera link has x pointing forward -->
+    <!-- When using real hardware, either keep this frame here, or let realsense driver publish it,
+    but only should publish in one place -->
+
+    <xacro:if value="$(arg use_sim)">
+        <link name="camera_optical_frame" />
+        <joint name="camera_optical_joint" type="fixed">
+            <parent link="camera_link" />
+            <child link="camera_optical_frame" />
+            <xacro:if value="$(arg use_sim)">
+                <!-- Gazebo Fortress uses +X as forward. This way can use same TF tree in sim and actuality -->
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </xacro:if>
+            <xacro:unless value="$(arg use_sim)">
+                <!-- real hardware: standard +Z forward -->
+                <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}" />
+            </xacro:unless>
+        </joint>
+
+    </xacro:if>
+
+    <!-- enable the Ignition Gazebo Sensors system -->
+    <gazebo>
+        <plugin
+            filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+
+    <!-- Attach D435 RGBD Camera Sensor to camera_link -->
+    <gazebo reference="camera_link">
+        <sensor type="rgbd_camera" name="realsense_d435">
+            <update_rate>30.0</update_rate>
+            <always_on>true</always_on>
+            <visualize>true</visualize>
+
+            <!-- Explicitly set frame_id = camera_optical_frame for ROS header transforms -->
+            <gz_frame_id>camera_optical_frame</gz_frame_id>
+
+            <!-- Base topics published inside Ignition -->
+            <topic>camera</topic>
+
+            <camera name="d435">
+                <!-- D435 RGB/Depth Horizontal FOV: ~69 deg (1.204 rad) -->
+                <horizontal_fov>1.204</horizontal_fov>
+                <image>
+                    <width>1280</width>
+                    <height>720</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.01</near>
+                    <far>10.0</far>
+                </clip>
+                <depth_camera>
+                    <clip>
+                        <!-- D435 ideal operational depth range (0.3m to 3.0m) -->
+                        <near>0.28</near>
+                        <far>3.0</far>
+                    </clip>
+                </depth_camera>
+            </camera>
+        </sensor>
+    </gazebo>
+
+</robot>

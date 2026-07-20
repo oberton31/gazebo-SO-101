@@ -14,10 +14,11 @@ def generate_launch_description():
 
     model_arg = DeclareLaunchArgument(
         name="model", 
-        default_value=os.path.join(maxarm_description_dir, "urdf", "so101.urdf.xacro"),
+        default_value=os.path.join(maxarm_description_dir, "urdf", "scene.urdf.xacro"),
         description="Absolute path to robot urdf file")
 
-    robot_description = ParameterValue(Command(["xacro ", LaunchConfiguration("model")]), value_type=str)
+    # If not using simulation, change the "use_sim" argument to False in the xacro command
+    robot_description = ParameterValue(Command(["xacro ", LaunchConfiguration("model"), " use_sim:=True"]), value_type=str)
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot name="so101" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <link name="world" />
+    <xacro:arg name="use_sim" default="false" />
+    <xacro:include filename="$(find lerobot_description)/urdf/so101.urdf.xacro" />
+    <xacro:include filename="$(find lerobot_description)/urdf/d435.urdf.xacro" />
+
+</robot>
