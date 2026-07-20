@@ -12,13 +12,15 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    lerobot_description = get_package_share_directory("lerobot_description")
+    lerobot_description = get_package_share_directory("lerobot_description") # where package installs
 
     model_arg = DeclareLaunchArgument(name="model", default_value=os.path.join(
                                         lerobot_description, "urdf", "so101.urdf.xacro"
                                         ),
                                       description="Absolute path to robot urdf file"
     )
+
+    world_path = os.path.join(lerobot_description, "worlds", "table_scene.sdf")
 
     gazebo_resource_path = SetEnvironmentVariable(
         name="GZ_SIM_RESOURCE_PATH",
@@ -44,10 +46,9 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-                launch_arguments=[
-                    ("gz_args", [" -v 4 -r empty.sdf "]
-                    )
-                ]
+                launch_arguments={
+                        "gz_args": f"-v 4 -r {world_path}"
+                    }.items()
              )
 
     gz_spawn_entity = Node(
@@ -55,7 +56,7 @@ def generate_launch_description():
         executable="create",
         output="screen",
         arguments=["-topic", "robot_description",
-                   "-name", "so101"],
+                   "-name", "so101", '-x', '0.0', '-y', '0.0', '-z', '1.015'],
     )
 
     gz_ros2_bridge = Node(

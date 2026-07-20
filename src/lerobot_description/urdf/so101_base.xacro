@@ -8,7 +8,6 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-	<!-- Links -->
 	<link name="world" />
 
 	<joint name="base_joint" type="fixed">
@@ -25,7 +24,7 @@
 		<color rgba="0.1 0.1 0.1 1.0" />
 	</material>
 
-	<!-- Link base -->
+	<!-- Link base. Note that original file had z origin offsets here which I removed to make the bottom of the base link align with the bottom of the part -->
 	<link name="base">
 		<inertial>
 			<origin xyz="0.020739 0.00204287 0.065966" rpy="0 0 0" />
@@ -35,7 +34,7 @@
 		</inertial>
 		<!-- Part base_motor_holder_so101_v1 -->
 		<visual>
-			<origin xyz="0.0206915 0.0221255 0.0300817" rpy="1.5708 -1.23909e-16 2.33147e-15" />
+			<origin xyz="0.0206915 0.0221255 0.0" rpy="1.5708 -1.23909e-16 2.33147e-15" />
 			<geometry>
 				<mesh
 					filename="package://lerobot_description/meshes/so101/base_motor_holder_so101_v1.stl" />
@@ -43,7 +42,7 @@
 			<material name="3d_printed" />
 		</visual>
 		<collision>
-			<origin xyz="0.0206915 0.0221255 0.0300817" rpy="1.5708 -1.23909e-16 2.33147e-15" />
+			<origin xyz="0.0206915 0.0221255 0.0" rpy="1.5708 -1.23909e-16 2.33147e-15" />
 			<geometry>
 				<mesh
 					filename="package://lerobot_description/meshes/so101/base_motor_holder_so101_v1.stl" />
@@ -51,14 +50,14 @@
 		</collision>
 		<!-- Part base_so101_v2 -->
 		<visual>
-			<origin xyz="0.0207909 0.0221255 0.0300817" rpy="1.5708 -0 0" />
+			<origin xyz="0.0207909 0.0221255 0.0" rpy="1.5708 -0 0" />
 			<geometry>
 				<mesh filename="package://lerobot_description/meshes/so101/base_so101_v2.stl" />
 			</geometry>
 			<material name="3d_printed" />
 		</visual>
 		<collision>
-			<origin xyz="0.0207909 0.0221255 0.0300817" rpy="1.5708 -0 0" />
+			<origin xyz="0.0207909 0.0221255 0.0" rpy="1.5708 -0 0" />
 			<geometry>
 				<mesh filename="package://lerobot_description/meshes/so101/base_so101_v2.stl" />
 			</geometry>
@@ -79,7 +78,7 @@
 		</collision>
 		<!-- Part waveshare_mounting_plate_so101_v2 -->
 		<visual>
-			<origin xyz="0.0205915 0.0467435 0.0798817" rpy="1.5708 -1.21716e-14 2.33147e-15" />
+			<origin xyz="0.0205915 0.0467435 0.0498" rpy="1.5708 -1.21716e-14 2.33147e-15" />
 			<geometry>
 				<mesh
 					filename="package://lerobot_description/meshes/so101/waveshare_mounting_plate_so101_v2.stl" />
@@ -87,7 +86,7 @@
 			<material name="3d_printed" />
 		</visual>
 		<collision>
-			<origin xyz="0.0205915 0.0467435 0.0798817" rpy="1.5708 -1.21716e-14 2.33147e-15" />
+			<origin xyz="0.0205915 0.0467435 0.0498" rpy="1.5708 -1.21716e-14 2.33147e-15" />
 			<geometry>
 				<mesh
 					filename="package://lerobot_description/meshes/so101/waveshare_mounting_plate_so101_v2.stl" />
