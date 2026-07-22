@@ -1,0 +1,158 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Camera Mount Material -->
+    <material name="camera_plastic">
+        <color rgba="0.2 0.2 0.2 1.0" />
+    </material>
+
+    <!-- Link camera_mount -->
+    <link name="camera_mount">
+        <inertial>
+            <!-- Estimated lightweight plastic mount + camera PCB (~0.025 kg) -->
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.025" />
+            <inertia ixx="1e-05" ixy="0" ixz="0" iyy="1e-05" iyz="0" izz="1e-05" />
+        </inertial>
+
+        <!-- First STL: Bracket / Base Mount -->
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://lerobot_description/meshes/camera_mount/camera_mount_base.stl"
+                    scale="0.001 0.001 0.001" />
+            </geometry>
+            <material name="3d_printed" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://lerobot_description/meshes/camera_mount/camera_mount_base.stl"
+                    scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+
+        <!-- Second STL: Camera Housing / Top Clamp -->
+        <visual>
+            <origin xyz="0 0.01 0.032" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://lerobot_description/meshes/camera_mount/camera_mount_top.stl"
+                    scale="0.001 0.001 0.001" />
+            </geometry>
+            <material name="camera_plastic" />
+        </visual>
+        <collision>
+            <origin xyz="0 0.01 0.032" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://lerobot_description/meshes/camera_mount/camera_mount_top.stl"
+                    scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Virtual frame representing the optical center of the camera lens -->
+    <link name="wrist_camera_optical_frame" />
+
+    <!-- Overhead camera will not be in the way, so just including camera feed but no physical
+    object. Adding a tiny
+     placeholder mass since otherwise Gazebo will not render-->
+    <link name="overhead_camera_optical_frame">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.001" />
+            <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.001 0.001 0.001" /> <!-- Tiny invisible box -->
+            </geometry>
+            <material name="camera_plastic" />
+        </visual>
+    </link>
+
+    <!-- Fixed Joint: Gripper -> Camera Mount -->
+    <joint name="gripper_to_camera_mount" type="fixed">
+        <parent link="gripper" />
+        <child link="camera_mount" />
+        <!-- Position relative to Joint 5/Gripper -->
+        <origin xyz="0.0 0.025 -0.025" rpy="${-pi/2} ${pi} 0" />
+    </joint>
+
+    <!-- Fixed Joint: Camera Mount -> Optical Frame (ROS Standard: +Z forward, +X right, +Y down) -->
+    <joint name="camera_mount_to_wrist_optical_frame" type="fixed">
+        <parent link="camera_mount" />
+        <child link="wrist_camera_optical_frame" />
+        <origin xyz="0.0 -0.006 0.040" rpy="${pi/2} ${pi/4} ${-pi/2}" />
+    </joint>
+
+    <joint name="world_to_overhead_optical_frame" type="fixed">
+        <parent link="world" />
+        <child link="overhead_camera_optical_frame" />
+        <origin xyz="0.0 0.15 0.8" rpy="${0} ${3*pi/8} ${-pi/2}" />
+    </joint>
+
+    <gazebo>
+        <plugin
+            filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+
+
+    <!-- Raspberry pi camera specs -->
+    <gazebo reference="wrist_camera_optical_frame">
+        <sensor type="camera" name="wrist_camera">
+            <update_rate>30</update_rate>
+            <topic>wrist_camera/image_raw</topic>
+            <camera name="wrist_cam">
+                <!-- ~62.2 deg horizontal FOV in radians -->
+                <horizontal_fov>1.08559</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.02</near> <!-- 2 cm close focus for wrist/grasping -->
+                    <far>3.0</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+        </sensor>
+    </gazebo>
+
+    <!-- overhead camera (standard USB webcam) -->
+    <gazebo reference="overhead_camera_optical_frame">
+        <sensor type="camera" name="overhead_camera">
+            <update_rate>30</update_rate>
+            <topic>overhead_camera/image_raw</topic>
+            <camera name="overhead_cam">
+                <horizontal_fov>1.36136</horizontal_fov> <!-- ~78.0 deg wide FOV -->
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>5.0</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.005</stddev>
+                </noise>
+            </camera>
+        </sensor>
+    </gazebo>
+
+
+</robot>

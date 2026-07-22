@@ -13,23 +13,21 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     lerobot_description = get_package_share_directory("lerobot_description") # where package installs
-    realsense2_description = get_package_share_directory("realsense2_description")
+    lerobot_gazebo = get_package_share_directory("lerobot_gazebo")
 
     model_arg = DeclareLaunchArgument(name="model", default_value=os.path.join(
-                                        lerobot_description, "urdf", "scene.urdf.xacro"
+                                        lerobot_description, "urdf", "so101_w_cameras.urdf.xacro"
                                         ),
                                       description="Absolute path to robot/scene urdf file"
     )
 
-    world_path = os.path.join(lerobot_description, "worlds", "table_scene.sdf")
+    world_path = os.path.join(lerobot_gazebo, "worlds", "table_scene.sdf")
 
     # put models in place where Gazebo can access them
     gazebo_resource_path = SetEnvironmentVariable(
             name="IGN_GAZEBO_RESOURCE_PATH",
             value=[
                 str(Path(lerobot_description).parent.resolve()),
-                ":",
-                str(Path(realsense2_description).parent.resolve())
             ]
         )
     
@@ -74,22 +72,25 @@ def generate_launch_description():
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
             
             # RGB Color Stream & Info
-            "/camera/image@sensor_msgs/msg/Image[ignition.msgs.Image",
-            "/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
+            "/wrist_camera/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
+            "/wrist_camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
             
-            # depth Stream
-            "/camera/depth_image@sensor_msgs/msg/Image[ignition.msgs.Image",
+            "/overhead_camera/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
+            "/overhead_camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
             
-            # 3D Point Cloud Stream. Note that 
-            "/camera/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked",
+            # # depth Stream
+            # "/camera/depth_image@sensor_msgs/msg/Image[ignition.msgs.Image",
+            
+            # # 3D Point Cloud Stream. Note that 
+            # "/camera/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked",
         ],
-        remappings=[
-            # standardize topic names to match typical ROS RealSense layout
-            ("/camera/image", "/camera/camera/color/image_raw"),
-            ("/camera/camera_info", "/camera/camera/color/camera_info"),
-            ("/camera/depth_image", "/camera/camera/depth/image_rect_raw"),
-            ("/camera/points", "/camera/camera/depth/color/points"),
-        ]
+        # remappings=[
+        #     # standardize topic names to match typical ROS RealSense layout
+        #     ("/camera/image", "/camera/camera/color/image_raw"),
+        #     ("/camera/camera_info", "/camera/camera/color/camera_info"),
+        #     ("/camera/depth_image", "/camera/camera/depth/image_rect_raw"),
+        #     ("/camera/points", "/camera/camera/depth/color/points"),
+        # ]
     )
 
     return LaunchDescription([

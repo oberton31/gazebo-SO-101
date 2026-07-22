@@ -1,16 +1,7 @@
 # ROS 2 Package for LeRobot SO-ARM101
 
-LeRobot SO-ARM101 integrated into ROS 2 Jazzy.
+This package, forked off Paviankv92/lerobot_ws, contains the ROS workspace components for the autonomous entry-way sorting SO-101 arm.
 
-## Features
-
-- ✅ ROS 2 Jazzy compatibility
-- ✅ Rviz visualization
-- ✅ Gazebo Harmonic simulation
-- ✅ ROS 2 Control integration
-- ✅ MoveIt 2 motion planning
-- 📝 **TODO:** ROS 2 control interface for the real HW
----
 ## Installation
 
 Clone this repository and install dependencies using [rosdep](https://docs.ros.org/en/ros2_packages/rosdep.html):
@@ -48,7 +39,7 @@ https://github.com/user-attachments/assets/98f0a867-46c5-4661-8308-5de9e60a960b
 **Summary:** Gazebo and ROS 2 Control: Control the gripper
 
 **Commands:**  
-`ros2 launch lerobot_description so101_gazebo.launch.py`  
+`ros2 launch lerobot_gazebo so101_gazebo.launch.py`  
 `ros2 launch lerobot_controller so101_controller.launch.py`
 
 **Video:**  
@@ -65,7 +56,7 @@ https://github.com/user-attachments/assets/7d82b15c-8276-43b1-9b73-00b3567a5cf7
 **Summary:** Gazebo, ROS 2 Control and MoveIt 2: MoveIt planner for the arm and gripper
 
 **Commands:**  
-`ros2 launch lerobot_description so101_gazebo.launch.py`  
+`ros2 launch lerobot_gazebo so101_gazebo.launch.py`  
 `ros2 launch lerobot_controller so101_controller.launch.py`  
 `ros2 launch lerobot_moveit so101_moveit.launch.py`
 

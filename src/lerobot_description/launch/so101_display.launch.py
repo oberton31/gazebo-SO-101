@@ -14,11 +14,17 @@ def generate_launch_description():
 
     model_arg = DeclareLaunchArgument(
         name="model", 
-        default_value=os.path.join(maxarm_description_dir, "urdf", "scene.urdf.xacro"),
+        default_value=os.path.join(maxarm_description_dir, "urdf", "so101_w_cameras.urdf.xacro"),
         description="Absolute path to robot urdf file")
+    
+    use_sim_arg = DeclareLaunchArgument(
+        name="use_sim",
+        default_value="true",
+        description="Whether to use simulation (Gazebo) or real hardware",
+    )
 
     # If not using simulation, change the "use_sim" argument to False in the xacro command
-    robot_description = ParameterValue(Command(["xacro ", LaunchConfiguration("model"), " use_sim:=True"]), value_type=str)
+    robot_description = ParameterValue(Command(["xacro ", LaunchConfiguration("model"), " use_sim:=", LaunchConfiguration("use_sim")]), value_type=str)
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -41,6 +47,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         model_arg,
+        use_sim_arg,
         joint_state_publisher_gui_node,
         robot_state_publisher_node,
         rviz_node

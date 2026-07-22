@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(lerobot_description)
+project(lerobot_gazebo)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,6 +7,8 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(lerobot_description REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -14,7 +16,7 @@ find_package(ament_cmake REQUIRED)
 
 # install directories (copies files to install folder alongside package, so it can be seen at runtime)
 install(
-  DIRECTORY launch urdf meshes rviz
+  DIRECTORY launch worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
